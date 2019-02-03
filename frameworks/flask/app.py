@@ -1,6 +1,7 @@
 import os
 
-HOST = os.environ.get('DHOST', '127.0.0.1')
+HTTP_HOST = os.environ.get('HTTP_HOST', '127.0.0.1:8080')
+SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1:5432')
 
 import flask
 import requests
@@ -9,7 +10,7 @@ from sqlalchemy.sql.expression import func
 
 
 app = flask.Flask(__name__, template_folder='.')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://benchmark:benchmark@%s:5432/benchmark' % HOST
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://benchmark:benchmark@%s/benchmark' % SQL_HOST
 app.config['SQLALCHEMY_POOL_SIZE'] = 10
 db = SQLAlchemy(app)
 
@@ -27,7 +28,7 @@ def json():
 
 @app.route('/remote')
 def remote():
-    response = requests.get('http://%s' % HOST)
+    response = requests.get('http://%s' % HTTP_HOST)
     return response.text
 
 

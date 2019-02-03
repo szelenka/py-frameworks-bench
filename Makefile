@@ -1,4 +1,6 @@
 DHOST	    ?= 192.168.99.100
+HTTP_HOST   ?= 192.168.99.100
+SQL_HOST    ?= 192.168.99.100
 VIRTUAL_ENV ?= .env
 
 $(VIRTUAL_ENV): $(CURDIR)/frameworks/aiohttp/requirements.txt $(CURDIR)/frameworks/bottle/requirements.txt $(CURDIR)/frameworks/django/requirements.txt $(CURDIR)/frameworks/falcon/requirements.txt $(CURDIR)/frameworks/flask/requirements.txt $(CURDIR)/frameworks/muffin/requirements.txt $(CURDIR)/frameworks/pyramid/requirements.txt $(CURDIR)/frameworks/tornado/requirements.txt $(CURDIR)/frameworks/wheezy/requirements.txt $(CURDIR)/frameworks/weppy/requirements.txt
@@ -25,7 +27,7 @@ $(VIRTUAL_ENV)/bin/py.test: $(VIRTUAL_ENV) $(CURDIR)/requirements.txt
 .PHONY: lab
 lab:
 	@echo Start docker container
-	@docker run -p 80:80 -p 5432:5432 --name pybenchmark -d horneds/pybenchmark && sleep 3
+	@docker run -p 8080:8080 -p 5432:5432 --name pybenchmark -d horneds/pybenchmark && sleep 3
 	@make -C $(CURDIR) db
 
 .PHONY: db

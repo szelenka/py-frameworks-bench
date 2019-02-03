@@ -1,0 +1,8 @@
+# postgres drivers
+libpq-dev
+
+# cffi (twisted)
+libffi-dev
+
+# cryptography (twisted)
+libssl-dev

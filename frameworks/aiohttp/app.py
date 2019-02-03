@@ -9,10 +9,11 @@ import peewee
 import peewee_async
 
 
-HOST = os.environ.get('DHOST', '127.0.0.1')
+HTTP_HOST = os.environ.get('HTTP_HOST', '127.0.0.1:8080')
+SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1:5432')
 
 database = peewee_async.PooledPostgresqlDatabase(
-    'benchmark', max_connections=10, user='benchmark', password='benchmark', host=HOST)
+    'benchmark', max_connections=10, user='benchmark', password='benchmark', host=SQL_HOST)
 
 
 class Message(peewee.Model):
@@ -30,7 +31,7 @@ def json(request):
 
 @asyncio.coroutine
 def remote(request):
-    response = yield from aiohttp.request('GET', 'http://%s' % HOST) # noqa
+    response = yield from aiohttp.request('GET', 'http://%s' % HTTP_HOST) # noqa
     text = yield from response.text()
     return aiohttp.web.Response(text=text, content_type='text/html')
 

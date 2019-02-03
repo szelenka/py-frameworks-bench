@@ -1,6 +1,7 @@
 import os
 
-HOST = os.environ.get('DHOST', '127.0.0.1')
+HTTP_HOST = os.environ.get('HTTP_HOST', '127.0.0.1:8080')
+SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1:5432')
 
 
 from django.conf import settings
@@ -17,7 +18,7 @@ settings.configure(
     DATABASES={
         'default': {
             'ENGINE': 'django_postgrespool',
-            'HOST': HOST,
+            'HOST': SQL_HOST,
             'NAME': 'benchmark',
             'USER': 'benchmark',
             'PASSWORD': 'benchmark',

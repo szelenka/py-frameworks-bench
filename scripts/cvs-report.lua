@@ -5,7 +5,7 @@ wrk.method = "GET"
  
 done = function(summary, latency, requests)
  
-        filename = "results.csv"
+        filename = os.getenv("OUTPUT_FILE")
         title = os.getenv("TESTEE")
         file = assert(io.open(filename, "a"))
         file.write(

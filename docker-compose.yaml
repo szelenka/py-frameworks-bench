@@ -1,0 +1,56 @@
+version: '2'
+
+services:
+  nginx:
+    container_name: pfb_nginx
+    build:
+      context: ./docker/nginx/
+      dockerfile: ./docker/nginx/Dockerfile
+    ports:
+      - 8080:8080
+    networks:
+      - app_net
+
+  # database that preserves data
+  postgresql:
+    container_name: pfb_postgresql
+    build:
+      context: ./docker/postgresql/
+      dockerfile: ./docker/postgresql/Dockerfile
+    environment:
+      - POSTGRESQL_USER=benchmark
+      - POSTGRESQL_PASSWORD=benchmark
+      - POSTGRESQL_DATABASE=benchmark
+    ports:
+      - 5432:5432
+    networks:
+      - app_net
+
+  # pybossa for API endpoints and basic HTML themed site
+  py-frameworks-bench:
+    container_name: pfb_bench
+    build:
+      context: ./docker/py-frameworks-bench/
+      dockerfile: ./docker/py-frameworks-bench/Dockerfile
+    depends_on:
+        - nginx
+        - postgresql
+    environment:
+      - HTTP_HOST=pfb_nginx:8080
+      - SQL_HOST=pfb_postgresql:5432
+    links:
+      - nginx
+      - postgresql
+    ports:
+      - 5000:5000
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.102.0/24
+          gateway: 192.168.102.1

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WRT Reports</title>
+  </head>
+  <body>
+    <div>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class=flashes>
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+    </div>
+    <form action="/start/" method="POST">
+      <button>Run Tests</button>
+    </form>
+    <table>
+      <tr>
+        <th>Framework</th>
+        <th>Site-packages Size</th>
+        <th>Last Run</th>
+      </tr>
+      {% for f in frameworks %}
+      <tr>
+        <td>{{ f.name }}</td>
+        <td>{{ f.size }}</td>
+        <td>{{ f.last_run }}</td>
+      </tr>
+      {% endfor %}
+  </body>
+</html>

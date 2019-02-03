@@ -5,9 +5,9 @@ from mixer.backend.peewee import mixer
 from playhouse.db_url import connect
 
 
-HOST = os.environ.get('DHOST', '127.0.0.1')
+SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1')
 
-PEEWEE_CONNECTION = 'postgres+pool://benchmark:benchmark@%s:5432/benchmark' % HOST
+PEEWEE_CONNECTION = 'postgres+pool://benchmark:benchmark@%s/benchmark' % SQL_HOST
 db = connect(PEEWEE_CONNECTION)
 db.connect()
 

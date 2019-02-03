@@ -5,11 +5,12 @@ import muffin
 import peewee
 
 
-HOST = os.environ.get('DHOST', '127.0.0.1')
+HTTP_HOST = os.environ.get('HTTP_HOST', '127.0.0.1:8080')
+SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1:5432')
 
-PEEWEE_CONNECTION = 'postgres+pool://benchmark:benchmark@%s:5432/benchmark' % HOST
+PEEWEE_CONNECTION = 'postgres+pool://benchmark:benchmark@%s/benchmark' % SQL_HOST
 PEEWEE_CONNECTION_PARAMS = {'encoding': 'utf-8', 'max_connections': 10}
-REMOTE_URL = 'http://%s' % HOST
+REMOTE_URL = 'http://%s' % HTTP_HOST
 
 if os.environ.get('TEST'):
     PEEWEE_CONNECTION = 'sqlite:///:memory:'

@@ -1,6 +1,7 @@
 import os
 
-HOST = os.environ.get('DHOST', '127.0.0.1')
+HTTP_HOST = os.environ.get('HTTP_HOST', '127.0.0.1:8080')
+SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1:5432')
 
 # Database
 from sqlalchemy import create_engine, schema, Column
@@ -9,7 +10,7 @@ from sqlalchemy.types import Integer, String
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-engine = create_engine("postgres://benchmark:benchmark@%s:5432/benchmark" % HOST, pool_size=10)
+engine = create_engine("postgres://benchmark:benchmark@%s/benchmark" % SQL_HOST, pool_size=10)
 metadata = schema.MetaData()
 Base = declarative_base(metadata=metadata)
 Session = sessionmaker(bind=engine)
@@ -46,7 +47,7 @@ class JSONResource(object):
 
 class RemoteResource(object):
     def on_get(self, request, response):
-        remote_response = requests.get('http://%s' % HOST)
+        remote_response = requests.get('http://%s' % HTTP_HOST)
         response.set_header('Content-Type', 'text/html')
         response.body = remote_response.text
 

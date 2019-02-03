@@ -13,7 +13,8 @@ from twisted.web.server import Site, NOT_DONE_YET
 from twisted.web.template import Element, renderer, XMLString, flatten
 
 
-HOST = os.environ.get('DHOST', '127.0.0.1')
+HTTP_HOST = os.environ.get('HTTP_HOST', '127.0.0.1:8080')
+SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1:5432')
 
 
 globalLogBeginner.beginLoggingTo([
@@ -29,7 +30,7 @@ def execute(arg, returnsData=True, fetchAll=True):
     return d
 
 
-connectionString = 'postgres://benchmark:benchmark@%s:5432/benchmark' % HOST
+connectionString = 'postgres://benchmark:benchmark@%s/benchmark' % SQL_HOST
 
 engine = create_engine(
     connectionString, reactor=reactor, strategy=TWISTED_STRATEGY)
@@ -55,7 +56,7 @@ class RemoteResource(Resource):
 
     def render_GET(self, request):
 
-        d = treq.get('http://%s' % HOST)
+        d = treq.get('http://%s' % HTTP_HOST)
         d.addCallback(treq.content)
         d.addCallback(request.write)
         d.addCallback(lambda _: request.finish())

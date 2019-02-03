@@ -11,9 +11,10 @@ from jinja2 import Template
 
 TEMPLATE = Template(open(os.path.join(os.path.dirname(__file__), 'template.html')).read())
 
-HOST = os.environ.get('DHOST', '127.0.0.1')
+HTTP_HOST = os.environ.get('HTTP_HOST', '127.0.0.1:8080')
+SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1:5432')
 
-engine = create_engine("postgres://benchmark:benchmark@%s:5432/benchmark" % HOST, pool_size=10)
+engine = create_engine("postgres://benchmark:benchmark@%s/benchmark" % SQL_HOST, pool_size=10)
 metadata = schema.MetaData()
 Base = declarative_base(metadata=metadata)
 Session = sessionmaker(bind=engine)
@@ -34,7 +35,7 @@ def app(env, start_response):
 
     if path == '/remote':
         start_response('200 OK', [('Content-Type', 'text/html')])
-        remote = requests.get('http://%s' % HOST).text
+        remote = requests.get('http://%s' % HTTP_HOST).text
         return [remote.encode('utf-8')]
 
     if path == '/complete':

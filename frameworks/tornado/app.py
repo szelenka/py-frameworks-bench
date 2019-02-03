@@ -1,6 +1,7 @@
 import os
 
-HOST = os.environ.get('DHOST', '127.0.0.1')
+HTTP_HOST = os.environ.get('HTTP_HOST', '127.0.0.1:8080')
+SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1:5432')
 
 import signal
 import logging
@@ -20,7 +21,7 @@ class RemoteHandler(web.RequestHandler):
 
     @gen.coroutine
     def get(self):
-        response = yield httpclient.AsyncHTTPClient().fetch('http://%s' % HOST)
+        response = yield httpclient.AsyncHTTPClient().fetch('http://%s' % HTTP_HOST)
         self.write(response.body)
 
 
@@ -33,7 +34,7 @@ from sqlalchemy.types import Integer, String
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-engine = create_engine('postgres://benchmark:benchmark@%s:5432/benchmark' % HOST, pool_size=10)
+engine = create_engine('postgres://benchmark:benchmark@%s/benchmark' % SQL_HOST, pool_size=10)
 metadata = schema.MetaData()
 Base = declarative_base(metadata=metadata)
 Session = sessionmaker(bind=engine)

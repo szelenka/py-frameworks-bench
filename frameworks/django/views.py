@@ -1,6 +1,6 @@
 import os
 
-HOST = os.environ.get('DHOST', '127.0.0.1')
+HTTP_HOST = os.environ.get('HTTP_HOST', '127.0.0.1:8080')
 
 import requests
 
@@ -23,7 +23,7 @@ def json(request):
 
 
 def remote(request):
-    response = requests.get('http://%s' % HOST)
+    response = requests.get('http://%s' % HTTP_HOST)
     return HttpResponse(response.text)
 
 
