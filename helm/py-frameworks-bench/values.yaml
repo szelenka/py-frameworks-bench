@@ -4,7 +4,7 @@ labels:
   partOf: py-frameworks-bench
 
 image:
-  repository: containers.cisco.com
+  repository: hub.docker.com
   organization: szelenka
   postgresql: frameworks-postgresql
   nginx: frameworks-nginx
