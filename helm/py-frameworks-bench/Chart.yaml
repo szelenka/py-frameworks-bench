@@ -1,0 +1,23 @@
+apiVersion: v1
+name: py-frameworks-bench
+version: 1.0.0
+kubeVersion:
+description: Python web frameworks for use in CAE (with restricted non-root arbitraty user execution)
+keywords:
+  - python
+  - web-frameworks
+  - benchmark
+  - openshift
+  - cae
+home: https://wwwin-github.cisco.com/ops-ds/data-curation-api-server
+sources:
+  - https://wwwin-github.cisco.com/ops-ds/data-curation-api-server
+maintainers:
+  - name: Scott Zelenka
+    email: szelenka@cisco.com
+    url: https://directory.cisco.com/dir/reports/szelenka
+#engine: gotpl
+#icon: A URL to an SVG or PNG image to be used as an icon (optional).
+appVersion: 1.0.0
+deprecated: False
+#tillerVersion: The version of Tiller that this chart requires. This should be expressed as a SemVer range: ">2.0.0" (optional)

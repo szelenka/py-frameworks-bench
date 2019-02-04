@@ -1,0 +1,98 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ include "fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: framework
+    app.kubernetes.io/part-of: {{ .Values.labels.partOf }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        released-on: {{ date "2006-01-02T15-04-05" .Release.Time }}
+    spec:
+      containers:
+        - name: controller
+          image: "{{ .Values.image.repository }}/{{ .Values.image.organization }}/{{ .Values.image.controller }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: TEST_HTTP_SERVER
+#            value: "{{ include "fullname" . }}-svc"
+            value: "127.0.0.1"
+          - name: APP_HTTP_PORT
+            value: "{{ .Values.service.frameworks }}"
+          - name: TEST_HTTP_PORT
+            value: "{{ .Values.service.testing }}"
+          ports:
+            - name: controller
+              containerPort: {{ .Values.service.controller }}
+              protocol: TCP
+        - name: frameworks
+          image: "{{ .Values.image.repository }}/{{ .Values.image.organization }}/{{ .Values.image.frameworks }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: HTTP_HOST
+#              value: "{{ include "fullname" . }}-nginx:{{ .Values.service.nginx }}"
+              value: "127.0.0.1:{{ .Values.service.nginx }}"
+            - name: SQL_HOST
+#              value: "{{ include "fullname" . }}-psql"
+              value: "127.0.0.1"
+          ports:
+            - name: frameworks
+              containerPort: {{ .Values.service.frameworks }}
+              protocol: TCP
+            - name: testing
+              containerPort: {{ .Values.service.testing }}
+              protocol: TCP
+          resources:
+{{ toYaml .Values.resources.frameworks | indent 12 }}
+        - name: postgresql
+          image: "{{ .Values.image.repository }}/{{ .Values.image.organization }}/{{ .Values.image.postgresql }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: POSTGRESQL_USER
+              valueFrom: { secretKeyRef: { name: {{ include "fullname" . }}-secret, key: POSTGRESQL_USER } }
+            - name: POSTGRESQL_PASSWORD
+              valueFrom: { secretKeyRef: { name: {{ include "fullname" . }}-secret, key: POSTGRESQL_PASSWORD } }
+            - name: POSTGRESQL_DATABASE
+              valueFrom: { secretKeyRef: { name: {{ include "fullname" . }}-secret, key: POSTGRESQL_DATABASE } }
+          ports:
+            - name: postgresql
+              containerPort: {{ .Values.service.postgresql }}
+              protocol: TCP
+          resources:
+{{ toYaml .Values.resources.postgresql | indent 12 }}
+        - name: nginx
+          image: "{{ .Values.image.repository }}/{{ .Values.image.organization }}/{{ .Values.image.nginx }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: nginx
+              containerPort: {{ .Values.service.nginx }}
+              protocol: TCP
+          resources:
+{{ toYaml .Values.resources.nginx | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

@@ -1,6 +1,7 @@
 import os
 import subprocess
 import flask
+import requests
 
 
 app = flask.Flask(__name__, template_folder='templates')
@@ -88,6 +89,7 @@ def start_tests():
         # TODO: parse arguments from website
         # WRK arguments
         env = os.environ.copy()
+        env['TEST_HTTP_SERVER'] = '0.0.0.0'
         env['DURATION'] = '20'
         env['CONNECTIONS'] = '200'
         env['THREADS'] = '10'

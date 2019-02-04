@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/bin/bash
+set -x
 
 APP_ROOT_SRC=${APP_ROOT_SRC-/opt/app-root/src}
 TRY_LOOP=${TRY_LOOP-30}
@@ -19,8 +20,8 @@ wait_for_port() {
 
 
 kill_and_wait_for_pid() {
-  local pid="${1}" j=0
-  kill `cat ${pid}`
+  local framework="${1}" j=0 pid="/tmp/${framework}.pid"
+  $(kill `cat ${pid}`)
   echo ">>> wait for ${pid} to terminate"
   # TODO: wait for PID to terminate?
   while [ -f "${pid}" ]; do
@@ -40,7 +41,8 @@ kill_and_wait_for_pid() {
 
 run_wsgi_service() {
   # default gunicorn options
-  local framework="${1}" http_server="${2}" http_port="${3}" pid="${4}"
+  local framework="${1}" http_server="${2}" http_port="${3}"
+  local pid="/tmp/${framework}.pid"
   local dir="${APP_ROOT_SRC}/frameworks/${framework}"
   local opts="--pid ${pid} --workers 2 --chdir=${dir} --bind=${http_server}:${http_port}"
   local cmd="${dir}/bin/gunicorn app:app ${opts}"
@@ -56,12 +58,12 @@ run_wsgi_service() {
     # TODO: how to specify the PID for twisted?
     # ${framework}/bin/python ${framework}/app.py &
   elif [ "${framework}" = "weppy" ]; then
-    rmdir ${dir}/databases
+    rm -rf ${dir}/databases
   fi
 
   cmd="${cmd} --worker-class=${worker_class} --daemon"
 
-  echo ">>> wait for ${framework} to startup"
+  echo ">>> Starting ${framework} from: ${APP_ROOT_SRC}/frameworks/${framework}"
   echo ${cmd}
   eval ${cmd}
   wait_for_port "${framework}" "${http_server}" "${http_port}"

@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "fullname" . }}-svc
+  labels:
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: frameworks
+    app.kubernetes.io/part-of: {{ .Values.labels.partOf }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.frameworks }}
+      targetPort: frameworks
+      protocol: TCP
+      name: frameworks
+  selector:
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "fullname" . }}-testing
+  labels:
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: testing
+    app.kubernetes.io/part-of: {{ .Values.labels.partOf }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.testing }}
+      targetPort: testing
+      protocol: TCP
+      name: testing
+  selector:
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "fullname" . }}-nginx
+  labels:
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: nginx
+    app.kubernetes.io/part-of: {{ .Values.labels.partOf }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.nginx }}
+      targetPort: nginx
+      protocol: TCP
+      name: nginx
+  selector:
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "fullname" . }}-psql
+  labels:
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: postgresql
+    app.kubernetes.io/part-of: {{ .Values.labels.partOf }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.postgresql }}
+      targetPort: postgresql
+      protocol: TCP
+      name: postgresql
+  selector:
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

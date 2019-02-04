@@ -1,0 +1,62 @@
+replicaCount: 1
+
+labels:
+  partOf: py-frameworks-bench
+
+image:
+  repository: containers.cisco.com
+  organization: szelenka
+  postgresql: frameworks-postgresql
+  nginx: frameworks-nginx
+  frameworks: frameworks
+  controller: frameworks-controller
+  tag: latest
+  pullPolicy: Always
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  postgresql: 5432
+  nginx: 8000
+  frameworks: 8001
+  testing: 5000
+  controller: 8002
+
+
+resources:
+  postgresql:
+    requests:
+      cpu: 25m
+      memory: 256Mi
+    limits:
+      cpu: 25m
+      memory: 256Mi
+  nginx:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 10m
+      memory: 32Mi
+  frameworks:
+    requests:
+      cpu: 100m
+      memory: 1Gi
+    limits:
+      cpu: 100m
+      memory: 1Gi
+  controller:
+    requests:
+      cpu: 100m
+      memory: 1Gi
+    limits:
+      cpu: 100m
+      memory: 1Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

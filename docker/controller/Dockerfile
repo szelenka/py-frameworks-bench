@@ -2,8 +2,8 @@ FROM python:3.6-slim-stretch
 
 ENV APP_ROOT_SRC="/opt/app-root/src"
 
-COPY ./docker/py-frameworks-bench/requirements.txt /tmp/requirements.txt
-COPY ./docker/py-frameworks-bench/requirements-apt.txt /tmp/requirements-apt.txt
+COPY ./docker/controller/requirements.txt /tmp/requirements.txt
+COPY ./docker/controller/requirements-apt.txt /tmp/requirements-apt.txt
 
 # install python packages
 RUN set -ex \
@@ -45,8 +45,11 @@ RUN set -ex \
         /usr/share/doc \
         /usr/share/doc-base
 
-COPY ./docker/py-frameworks-bench/gunicorn.conf ${APP_ROOT_SRC}/gunicorn.conf
-COPY ./docker/py-frameworks-bench/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY ./webapp-controller/ ${APP_ROOT_SRC}/webapp-controller/
+COPY ./scripts/ ${APP_ROOT_SRC}/scripts/
+COPY ./frameworks/ ${APP_ROOT_SRC}/frameworks/
+COPY ./docker/controller/gunicorn.conf ${APP_ROOT_SRC}/gunicorn.conf
+COPY ./docker/controller/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN ln -s /usr/local/bin/docker-entrypoint.sh / \
   && mkdir -p ${APP_ROOT_SRC}/reports \
   && chgrp -R 0 \
@@ -60,8 +63,9 @@ RUN ln -s /usr/local/bin/docker-entrypoint.sh / \
   && chmod 770 \
     /usr/local/bin/docker-entrypoint.sh \
     /etc/passwd \
-    ${APP_ROOT_SRC}/scripts/launch_framework_test.sh
+  && chmod -R 770 \
+    ${APP_ROOT_SRC}/scripts
 
 WORKDIR ${APP_ROOT_SRC}
-EXPOSE 8080
+EXPOSE 8002
 ENTRYPOINT ["docker-entrypoint.sh"]

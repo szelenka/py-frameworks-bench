@@ -16,7 +16,7 @@ fi
 
 
 # spawn simple server to host results
-source ${APP_ROOT_SRC}/webapp/bin/activate
+source ${APP_ROOT_SRC}/webapp-frameworks/bin/activate
 
 # verify we have the packages we need to run the webapp
 #${APP_ROOT_SRC}/webapp/bin/pip install -r ${APP_ROOT_SRC}/webapp/requirements.txt
@@ -28,5 +28,5 @@ source ${APP_ROOT_SRC}/webapp/bin/activate
 exec gunicorn app:app \
   -c ${APP_ROOT_SRC}/gunicorn.conf \
   -p /tmp/webapp.pid \
-  --bind=0.0.0.0:8080 \
-  --chdir=${APP_ROOT_SRC}/webapp
+  --bind=0.0.0.0:8001 \
+  --chdir=${APP_ROOT_SRC}/webapp-frameworks

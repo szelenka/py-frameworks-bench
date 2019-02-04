@@ -56,8 +56,8 @@ RUN set -ex \
         ; \
       done \
     # environment for the basic webapp
-    && virtualenv webapp --python=python3 --system-site-packages \
-    && ${APP_ROOT_SRC}/webapp/bin/pip install -I flask gunicorn==${GUNICORN_VERSION} \
+    && virtualenv webapp-frameworks --python=python3 --system-site-packages \
+    && ${APP_ROOT_SRC}/webapp-frameworks/bin/pip install -I flask gunicorn==${GUNICORN_VERSION} \
     && runDeps="$( \
         scanelf --needed --nobanner --recursive /usr/local \
               | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
@@ -77,10 +77,9 @@ RUN set -ex \
         /usr/share/doc \
         /usr/share/doc-base
 
-#RUN apt-get update && apt-get install -y procps
-#RUN apt-get update && apt-get install -y vim
+#RUN apt-get update && apt-get install -yqq procps vim
 
-COPY ./webapp/ ${APP_ROOT_SRC}/webapp/
+COPY ./webapp-frameworks/ ${APP_ROOT_SRC}/webapp-frameworks/
 COPY ./scripts/ ${APP_ROOT_SRC}/scripts/
 COPY ./docker/frameworks/gunicorn.conf ${APP_ROOT_SRC}/gunicorn.conf
 COPY ./docker/frameworks/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
@@ -89,19 +88,20 @@ RUN ln -s /usr/local/bin/docker-entrypoint.sh / \
   && chgrp -R 0 \
     /usr/local/bin/docker-entrypoint.sh \
     /etc/passwd \
-    ${APP_ROOT_SRC}/webapp \
+    ${APP_ROOT_SRC}/webapp-frameworks \
     ${APP_ROOT_SRC}/scripts \
     ${APP_ROOT_SRC}/reports \
   && chmod -R g+rwX \
     /usr/local/bin/docker-entrypoint.sh \
     /etc/passwd \
-    ${APP_ROOT_SRC}/webapp \
+    ${APP_ROOT_SRC}/webapp-frameworks \
     ${APP_ROOT_SRC}/scripts \
     ${APP_ROOT_SRC}/reports \
   && chmod 770 \
     /usr/local/bin/docker-entrypoint.sh \
     /etc/passwd \
-    ${APP_ROOT_SRC}/scripts/launch_framework_test.sh
+  && chmod -R 770 \
+    ${APP_ROOT_SRC}/scripts
 
-EXPOSE 8080
+EXPOSE 8001 5000
 ENTRYPOINT ["docker-entrypoint.sh"]

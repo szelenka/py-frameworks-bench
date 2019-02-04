@@ -23,8 +23,10 @@ done = function(summary, latency, requests)
                 latency.mean / 1000,
                 summary.duration / 1000000,
                 summary.requests,
-                summary.errors.status,
+                summary.errors.connect,
                 summary.errors.read,
+                summary.errors.write,
+                summary.errors.status,
                 summary.errors.timeout
                 ));
         file.close()

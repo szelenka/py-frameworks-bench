@@ -57,7 +57,7 @@ SET default_with_oids = false;
 -- Name: message; Type: TABLE; Schema: public; Owner: benchmark; Tablespace: 
 --
 
-CREATE TABLE message (
+CREATE TABLE IF NOT EXISTS message (
     id integer NOT NULL,
     content character varying(512) NOT NULL
 );
@@ -69,7 +69,7 @@ ALTER TABLE public.message OWNER TO benchmark;
 -- Name: message_id_seq; Type: SEQUENCE; Schema: public; Owner: benchmark
 --
 
-CREATE SEQUENCE message_id_seq
+CREATE SEQUENCE IF NOT EXISTS message_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
