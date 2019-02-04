@@ -1,5 +1,5 @@
 pyramid         == 1.7
-psycopg2
+psycopg2-binary
 pyramid_jinja2
 requests
 SQLAlchemy      >= 1.0.12

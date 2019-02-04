@@ -1,6 +1,6 @@
 weppy       == 0.7.1
 
-psycopg2
+psycopg2-binary
 requests    == 2.10.0
 
 gunicorn    >= 19.6.0

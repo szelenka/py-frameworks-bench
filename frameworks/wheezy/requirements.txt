@@ -1,5 +1,5 @@
 wheezy.web[jinja2]  == 0.1.485
-psycopg2
+psycopg2-binary
 requests
 SQLAlchemy          >= 1.0.13
 

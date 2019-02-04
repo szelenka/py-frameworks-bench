@@ -12,9 +12,9 @@ from jinja2 import Template
 TEMPLATE = Template(open(os.path.join(os.path.dirname(__file__), 'template.html')).read())
 
 HTTP_HOST = os.environ.get('HTTP_HOST', '127.0.0.1:8080')
-SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1:5432')
+SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1')
 
-engine = create_engine("postgres://benchmark:benchmark@%s/benchmark" % SQL_HOST, pool_size=10)
+engine = create_engine("postgres://benchmark:benchmark@%s:5432/benchmark" % SQL_HOST, pool_size=10)
 metadata = schema.MetaData()
 Base = declarative_base(metadata=metadata)
 Session = sessionmaker(bind=engine)

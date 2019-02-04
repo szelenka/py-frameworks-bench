@@ -14,7 +14,7 @@ from twisted.web.template import Element, renderer, XMLString, flatten
 
 
 HTTP_HOST = os.environ.get('HTTP_HOST', '127.0.0.1:8080')
-SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1:5432')
+SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1')
 
 
 globalLogBeginner.beginLoggingTo([
@@ -30,7 +30,7 @@ def execute(arg, returnsData=True, fetchAll=True):
     return d
 
 
-connectionString = 'postgres://benchmark:benchmark@%s/benchmark' % SQL_HOST
+connectionString = 'postgres://benchmark:benchmark@%s:5432/benchmark' % SQL_HOST
 
 engine = create_engine(
     connectionString, reactor=reactor, strategy=TWISTED_STRATEGY)

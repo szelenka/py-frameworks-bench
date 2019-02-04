@@ -1,7 +1,7 @@
 Django              == 1.9.7
 django-postgrespool == 0.3.0
 
-psycopg2
+psycopg2-binary
 requests            == 2.10.0
 
 gunicorn            >= 19.5.0

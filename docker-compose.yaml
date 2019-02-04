@@ -1,13 +1,14 @@
 version: '2'
 
 services:
+  # nginx to serve static resources
   nginx:
     container_name: pfb_nginx
     build:
-      context: ./docker/nginx/
+      context: ./
       dockerfile: ./docker/nginx/Dockerfile
     ports:
-      - 8080:8080
+      - 8000:8000
     networks:
       - app_net
 
@@ -15,7 +16,7 @@ services:
   postgresql:
     container_name: pfb_postgresql
     build:
-      context: ./docker/postgresql/
+      context: ./
       dockerfile: ./docker/postgresql/Dockerfile
     environment:
       - POSTGRESQL_USER=benchmark
@@ -26,25 +27,42 @@ services:
     networks:
       - app_net
 
-  # pybossa for API endpoints and basic HTML themed site
-  py-frameworks-bench:
-    container_name: pfb_bench
+  # collection of python web frameworks to test
+  frameworks:
+    container_name: pfb_frameworks
     build:
-      context: ./docker/py-frameworks-bench/
-      dockerfile: ./docker/py-frameworks-bench/Dockerfile
+      context: ./
+      dockerfile: ./docker/frameworks/Dockerfile
     depends_on:
         - nginx
         - postgresql
     environment:
-      - HTTP_HOST=pfb_nginx:8080
-      - SQL_HOST=pfb_postgresql:5432
+      - HTTP_HOST=pfb_nginx:8000
+      - SQL_HOST=pfb_postgresql
     links:
       - nginx
       - postgresql
     ports:
-      - 5000:5000
+      - 8080:8080
     networks:
       - app_net
+
+  # controller to initalize and collect test results
+#  controller:
+#    container_name: pfb_controller
+#    build:
+#      context: ./
+#      dockerfile: ./docker/controller/Dockerfile
+#    depends_on:
+#    - frameworks
+#    environment:
+#    - FRAMEWORK_HOST=pfb_frameworks:5000
+#    links:
+#    - frameworks
+#    ports:
+#    - 8080:8080
+#    networks:
+#    - app_net
 
 networks:
   app_net:
@@ -52,5 +70,5 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 192.168.102.0/24
-          gateway: 192.168.102.1
+        - subnet: 192.168.101.0/24
+          gateway: 192.168.101.1

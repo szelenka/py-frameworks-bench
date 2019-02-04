@@ -10,10 +10,11 @@ import peewee_async
 
 
 HTTP_HOST = os.environ.get('HTTP_HOST', '127.0.0.1:8080')
-SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1:5432')
+SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1')
 
 database = peewee_async.PooledPostgresqlDatabase(
-    'benchmark', max_connections=10, user='benchmark', password='benchmark', host=SQL_HOST)
+    'benchmark', max_connections=10, user='benchmark', password='benchmark', host=SQL_HOST
+)
 
 
 class Message(peewee.Model):

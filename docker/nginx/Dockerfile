@@ -38,5 +38,5 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log \
   && chmod 770 \
     /etc/passwd
 
-EXPOSE 8080
-ENTRYPOINT ["nginx", "-g", '"daemon off;"', "-c", "/etc/nginx/nginx.conf"]
+EXPOSE 8000
+#ENTRYPOINT ["nginx", "-g", '"daemon off;"', "-c", "/etc/nginx/nginx.conf"]

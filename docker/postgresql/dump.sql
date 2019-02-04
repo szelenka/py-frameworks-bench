@@ -11,40 +11,40 @@ SET client_min_messages = warning;
 
 SET search_path = public, pg_catalog;
 
-ALTER TABLE ONLY public.message DROP CONSTRAINT message_pkey;
-ALTER TABLE public.message ALTER COLUMN id DROP DEFAULT;
-DROP SEQUENCE public.message_id_seq;
-DROP TABLE public.message;
-DROP EXTENSION plpgsql;
-DROP SCHEMA public;
+--ALTER TABLE ONLY public.message DROP CONSTRAINT message_pkey;
+--ALTER TABLE public.message ALTER COLUMN id DROP DEFAULT;
+--DROP SEQUENCE public.message_id_seq;
+--DROP TABLE public.message;
+--DROP EXTENSION plpgsql;
+--DROP SCHEMA public;
 --
 -- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
-CREATE SCHEMA public;
+--CREATE SCHEMA public;
 
 
-ALTER SCHEMA public OWNER TO postgres;
+--ALTER SCHEMA public OWNER TO postgres;
 
 --
 -- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: postgres
 --
 
-COMMENT ON SCHEMA public IS 'standard public schema';
+--COMMENT ON SCHEMA public IS 'standard public schema';
 
 
 --
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
 --
 
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+--CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
 -- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
 --
 
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+--COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 SET search_path = public, pg_catalog;

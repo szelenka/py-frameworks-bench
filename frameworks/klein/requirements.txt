@@ -1,4 +1,4 @@
 klein
-psycopg2
+psycopg2-binary
 sqlalchemy
 treq

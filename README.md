@@ -10,9 +10,12 @@ There are some benchmarks for popular python frameworks.
 * [Flask](https://github.com/mitsuhiko/flask)          -- A microframework based on Werkzeug, Jinja2 and good intentions
 * [Muffin](https://github.com/klen/muffin)             -- A web-framework based on Asyncio stack
 * [Pyramid](https://github.com/Pylons/pyramid)         -- A small, fast, down-to-earth, open source Python web framework
+* [Responder](https://github.com/kennethreitz/responder) -- A familiar HTTP Service Framework for Python
 * [Tornado](https://github.com/tornadoweb/tornado)     -- A Python web framework and asynchronous networking library
 * [Wheezy Web](https://bitbucket.org/akorn/wheezy.web) -- A lightweight, high performance, high concurrency WSGI web framework.
 * [weppy](https://github.com/gi0baro/weppy)            -- The Web framework for humans
+
+[TechEmpower - 2018](https://www.techempower.com/benchmarks/#section=data-r17&hw=ph&test=fortune&l=zijzen-1) simulated tests
 
 The goal of the project is not tests for deployment (like uwsgi vs gunicorn and
 etc) but instead tests the frameworks itself.

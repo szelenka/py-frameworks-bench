@@ -1,7 +1,7 @@
 import os
 
 HTTP_HOST = os.environ.get('HTTP_HOST', '127.0.0.1:8080')
-SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1:5432')
+SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1')
 
 
 from django.conf import settings

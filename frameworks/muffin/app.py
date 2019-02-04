@@ -6,9 +6,9 @@ import peewee
 
 
 HTTP_HOST = os.environ.get('HTTP_HOST', '127.0.0.1:8080')
-SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1:5432')
+SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1')
 
-PEEWEE_CONNECTION = 'postgres+pool://benchmark:benchmark@%s/benchmark' % SQL_HOST
+PEEWEE_CONNECTION = 'postgres+pool://benchmark:benchmark@%s:5432/benchmark' % SQL_HOST
 PEEWEE_CONNECTION_PARAMS = {'encoding': 'utf-8', 'max_connections': 10}
 REMOTE_URL = 'http://%s' % HTTP_HOST
 

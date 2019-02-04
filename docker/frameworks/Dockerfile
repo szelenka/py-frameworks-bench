@@ -1,9 +1,10 @@
-FROM python:3.7-slim-stretch
+FROM python:3.6-slim-stretch
 
 ENV APP_ROOT_SRC="/opt/app-root/src"
+ENV GUNICORN_VERSION="19.9.0"
 
-COPY ./docker/py-frameworks-bench/requirements.txt /tmp/requirements.txt
-COPY ./docker/py-frameworks-bench/requirements-apt.txt /tmp/requirements-apt.txt
+COPY ./docker/frameworks/requirements.txt /tmp/requirements.txt
+COPY ./docker/frameworks/requirements-apt.txt /tmp/requirements-apt.txt
 
 # add source code and execution file
 COPY ./frameworks/ ${APP_ROOT_SRC}/frameworks/
@@ -21,8 +22,7 @@ RUN set -ex \
     ' \
     && apt-get update -yqq \
     && apt-get upgrade -yqq \
-    && apt-get install -yqq --no-install-recommends $buildDeps \
-    && apt-get install -yqq wrk curl \
+    && apt-get install -yqq --no-install-recommends $buildDeps wrk curl netcat \
     && cat /tmp/requirements-apt.txt | egrep -v "^\s*(#|$)" | xargs apt-get install -yqq \
     && CFLAGS="-Os -g0 -Wl,--strip-all" /usr/local/bin/pip install \
         --no-cache-dir \
@@ -51,13 +51,13 @@ RUN set -ex \
           --global-option="-j 4" \
           -r ${framework}/requirements.txt \
         # gunicorn needs to be installed in EACH virtualenv...
-        && ${framework}/bin/pip install -I gunicorn \
+        && ${framework}/bin/pip install -I gunicorn==${GUNICORN_VERSION} \
 #        && deactivate \
         ; \
       done \
     # environment for the basic webapp
     && virtualenv webapp --python=python3 --system-site-packages \
-    && ${APP_ROOT_SRC}/webapp/bin/pip install -I flask gunicorn \
+    && ${APP_ROOT_SRC}/webapp/bin/pip install -I flask gunicorn==${GUNICORN_VERSION} \
     && runDeps="$( \
         scanelf --needed --nobanner --recursive /usr/local \
               | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
@@ -82,8 +82,8 @@ RUN set -ex \
 
 COPY ./webapp/ ${APP_ROOT_SRC}/webapp/
 COPY ./scripts/ ${APP_ROOT_SRC}/scripts/
-COPY ./docker/py-frameworks-bench/gunicorn.conf ${APP_ROOT_SRC}/gunicorn.conf
-COPY ./docker/py-frameworks-bench/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY ./docker/frameworks/gunicorn.conf ${APP_ROOT_SRC}/gunicorn.conf
+COPY ./docker/frameworks/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN ln -s /usr/local/bin/docker-entrypoint.sh / \
   && mkdir -p ${APP_ROOT_SRC}/reports \
   && chgrp -R 0 \
