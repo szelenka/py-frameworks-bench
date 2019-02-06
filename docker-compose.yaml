@@ -22,6 +22,7 @@ services:
       - POSTGRESQL_USER=benchmark
       - POSTGRESQL_PASSWORD=benchmark
       - POSTGRESQL_DATABASE=benchmark
+      - POSTGRESQL_MAX_CONNECTIONS=500
     ports:
       - 5432:5432
     networks:

@@ -8,3 +8,5 @@
 /todo.txt
 __pycache__
 *~
+helm/py-frameworks-bench/files/secret
+helm/py-frameworks-bench/values.yaml

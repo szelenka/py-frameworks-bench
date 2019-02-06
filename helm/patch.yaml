@@ -1,0 +1,12 @@
+spec:
+  template:
+    spec:
+      containers:
+      - name: frameworks
+        resources:
+          requests:
+            cpu: 300m
+            memory: 1Gi
+          limits:
+            cpu: 300m
+            memory: 1Gi

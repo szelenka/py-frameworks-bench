@@ -1,32 +1,27 @@
 import asyncio
 import asyncpg
 import os
+import uvicorn
 import responder
-import requests
 import jinja2
-from random import randint
-from operator import itemgetter
+# import gino
+from aiohttp import ClientSession
 
-from sqlalchemy import create_engine, schema, Column
-from sqlalchemy.sql.expression import func
-from sqlalchemy.types import Integer, String
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-
-HTTP_HOST = os.environ.get('HTTP_HOST', '127.0.0.1:8080')
+HTTP_HOST = os.environ.get('HTTP_HOST', '127.0.0.1:8000')
 SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1')
 
-engine = create_engine("postgres://benchmark:benchmark@%s:5432/benchmark" % SQL_HOST, pool_size=10)
-metadata = schema.MetaData()
-Base = declarative_base(metadata=metadata)
-Session = sessionmaker(bind=engine)
+# sa = gino.Gino()
+import sqlalchemy as sa
+from sqlalchemy.ext.declarative import declarative_base
 
+metadata = sa.schema.MetaData()
+Base = declarative_base(metadata=metadata)
 
 class Message(Base):
     __tablename__ = 'message'
 
-    id = Column(Integer, primary_key=True)
-    content = Column(String(length=512))
+    id = sa.Column(sa.Integer, primary_key=True)
+    content = sa.Column(sa.String(length=512))
 
 
 async def setup_database():
@@ -48,7 +43,7 @@ def load_fortunes_template():
 
 
 connection_pool = None
-sort_fortunes_key = itemgetter(1)
+# sort_fortunes_key = itemgetter(1)
 template = load_fortunes_template()
 loop = asyncio.get_event_loop()
 loop.run_until_complete(setup_database())
@@ -63,19 +58,25 @@ def json_serialization(req, resp):
 
 
 @app.route('/remote')
-def remote(req, resp):
-    response = requests.get('http://%s' % HTTP_HOST)
-    resp.text = response.text
+async def remote(req, resp):
+    url = 'http://%s' % HTTP_HOST
+    async with ClientSession() as session:
+        async with session.get(url) as response:
+            resp.text = await response.text()
 
 
 @app.route('/complete')
 async def complete(req, resp):
-    messages = list(Message.query.order_by(func.random()).limit(100))
+    # async with sa.with_bind("postgres://benchmark:benchmark@%s:5432/benchmark" % SQL_HOST) as engine:
+    # async with sa.bind.acquire() as connection:
+    async with connection_pool.acquire() as connection:
+        messages = await connection.fetchall(Message.__table__.select().order_by(sa.func.random()).limit(100))
+
     messages.append(Message(content='Hello, World!'))
     messages.sort(key=lambda m: m.content)
     resp.headers['Content-Type'] = "text/html;charset=utf-8"
-    resp.content = template.render(messages=messages)
+    resp.content = template.render(messages=list(messages))
 
 
 if __name__ == '__main__':
-    app.run('0.0.0.0')
+    uvicorn.run(app, host="127.0.0.1", port=5000)

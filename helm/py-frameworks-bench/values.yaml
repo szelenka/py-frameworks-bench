@@ -42,17 +42,17 @@ resources:
       memory: 32Mi
   frameworks:
     requests:
-      cpu: 100m
+      cpu: 300m
       memory: 1Gi
     limits:
-      cpu: 100m
+      cpu: 300m
       memory: 1Gi
   controller:
     requests:
-      cpu: 100m
+      cpu: 50m
       memory: 1Gi
     limits:
-      cpu: 100m
+      cpu: 50m
       memory: 1Gi
 
 nodeSelector: {}

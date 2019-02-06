@@ -50,7 +50,7 @@ run_wsgi_service() {
 
   if [ "${framework}" = "tornado" ]; then
     worker_class="gunicorn.workers.gtornado.TornadoWorker"
-  elif [ "${framework}" = "responder" ]; then
+  elif [ "${framework}" = "responder" ] || [ "${framework}" = "starlette" ] ; then
     worker_class="uvicorn.workers.UvicornWorker"
   elif [ "${framework}" = "twisted" ]; then
     opts="-pid &"
