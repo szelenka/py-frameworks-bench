@@ -40,6 +40,8 @@ spec:
             - name: controller
               containerPort: {{ .Values.service.controller }}
               protocol: TCP
+          resources:
+{{ toYaml .Values.resources.controller | indent 12 }}
         - name: frameworks
           image: "{{ .Values.image.repository }}/{{ .Values.image.organization }}/{{ .Values.image.frameworks }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}

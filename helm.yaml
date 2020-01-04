@@ -1,0 +1,218 @@
+---
+# Source: py-frameworks-bench/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: py-frameworks-bench-v1-secret
+  namespace: cps-ds-docker-deployment-demo
+type: Opaque
+data:
+  .gitkeep: ""
+  POSTGRESQL_DATABASE: YmVuY2htYXJr
+  POSTGRESQL_PASSWORD: YmVuY2htYXJr
+  POSTGRESQL_USER: YmVuY2htYXJr
+  
+---
+# Source: py-frameworks-bench/templates/services.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: py-frameworks-bench-v1-svc
+  labels:
+    app.kubernetes.io/name: py-frameworks-bench
+    app.kubernetes.io/instance: v1
+    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/component: frameworks
+    app.kubernetes.io/part-of: py-frameworks-bench
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8001
+      targetPort: frameworks
+      protocol: TCP
+      name: frameworks
+  selector:
+    app.kubernetes.io/name: py-frameworks-bench
+    app.kubernetes.io/instance: v1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: py-frameworks-bench-v1-testing
+  labels:
+    app.kubernetes.io/name: py-frameworks-bench
+    app.kubernetes.io/instance: v1
+    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/component: testing
+    app.kubernetes.io/part-of: py-frameworks-bench
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5000
+      targetPort: testing
+      protocol: TCP
+      name: testing
+  selector:
+    app.kubernetes.io/name: py-frameworks-bench
+    app.kubernetes.io/instance: v1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: py-frameworks-bench-v1-nginx
+  labels:
+    app.kubernetes.io/name: py-frameworks-bench
+    app.kubernetes.io/instance: v1
+    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/component: nginx
+    app.kubernetes.io/part-of: py-frameworks-bench
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: nginx
+      protocol: TCP
+      name: nginx
+  selector:
+    app.kubernetes.io/name: py-frameworks-bench
+    app.kubernetes.io/instance: v1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: py-frameworks-bench-v1-psql
+  labels:
+    app.kubernetes.io/name: py-frameworks-bench
+    app.kubernetes.io/instance: v1
+    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/component: postgresql
+    app.kubernetes.io/part-of: py-frameworks-bench
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+      targetPort: postgresql
+      protocol: TCP
+      name: postgresql
+  selector:
+    app.kubernetes.io/name: py-frameworks-bench
+    app.kubernetes.io/instance: v1
+
+---
+# Source: py-frameworks-bench/templates/deployment.yaml
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: py-frameworks-bench-v1
+  labels:
+    app.kubernetes.io/name: py-frameworks-bench
+    app.kubernetes.io/instance: v1
+    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/component: framework
+    app.kubernetes.io/part-of: py-frameworks-bench
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: py-frameworks-bench
+      app.kubernetes.io/instance: v1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: py-frameworks-bench
+        app.kubernetes.io/instance: v1
+        released-on: 2019-02-24T20-58-30
+    spec:
+      containers:
+        - name: controller
+          image: "containers.cisco.com/szelenka/frameworks-controller:latest"
+          imagePullPolicy: Always
+          env:
+          - name: TEST_HTTP_SERVER
+#            value: "py-frameworks-bench-v1-svc"
+            value: "127.0.0.1"
+          - name: APP_HTTP_PORT
+            value: "8001"
+          - name: TEST_HTTP_PORT
+            value: "5000"
+          ports:
+            - name: controller
+              containerPort: 8002
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 50m
+              memory: 1Gi
+            requests:
+              cpu: 50m
+              memory: 1Gi
+            
+        - name: frameworks
+          image: "containers.cisco.com/szelenka/frameworks:latest"
+          imagePullPolicy: Always
+          env:
+            - name: HTTP_HOST
+#              value: "py-frameworks-bench-v1-nginx:8000"
+              value: "127.0.0.1:8000"
+            - name: SQL_HOST
+#              value: "py-frameworks-bench-v1-psql"
+              value: "127.0.0.1"
+          ports:
+            - name: frameworks
+              containerPort: 8001
+              protocol: TCP
+            - name: testing
+              containerPort: 5000
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 200m
+              memory: 1Gi
+            requests:
+              cpu: 200m
+              memory: 1Gi
+            
+        - name: postgresql
+          image: "containers.cisco.com/szelenka/frameworks-postgresql:latest"
+          imagePullPolicy: Always
+          env:
+            - name: POSTGRESQL_USER
+              valueFrom: { secretKeyRef: { name: py-frameworks-bench-v1-secret, key: POSTGRESQL_USER } }
+            - name: POSTGRESQL_PASSWORD
+              valueFrom: { secretKeyRef: { name: py-frameworks-bench-v1-secret, key: POSTGRESQL_PASSWORD } }
+            - name: POSTGRESQL_DATABASE
+              valueFrom: { secretKeyRef: { name: py-frameworks-bench-v1-secret, key: POSTGRESQL_DATABASE } }
+          ports:
+            - name: postgresql
+              containerPort: 5432
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 100m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            
+        - name: nginx
+          image: "containers.cisco.com/szelenka/frameworks-nginx:latest"
+          imagePullPolicy: Always
+          ports:
+            - name: nginx
+              containerPort: 8000
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 10m
+              memory: 32Mi
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            

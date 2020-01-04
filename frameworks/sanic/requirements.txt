@@ -1,0 +1,11 @@
+sanic               == 18.12.0
+psycopg2-binary
+requests
+marshmallow         == 2.18.1
+SQLAlchemy          >= 1.0.12
+asyncpg   == 0.18.2
+aiohttp   == 3.5.4
+databases == 0.1.4
+marshmallow == 2.18.1
+ujson     == 1.35
+uvicorn   >= 0.3.13

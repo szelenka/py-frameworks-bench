@@ -1,4 +1,4 @@
-FROM python:3.6-slim-stretch
+FROM python:3.7-slim-stretch
 
 ENV APP_ROOT_SRC="/opt/app-root/src"
 ENV GUNICORN_VERSION="19.9.0"
@@ -22,7 +22,7 @@ RUN set -ex \
     ' \
     && apt-get update -yqq \
     && apt-get upgrade -yqq \
-    && apt-get install -yqq --no-install-recommends $buildDeps wrk curl netcat \
+    && apt-get install -yqq --no-install-recommends $buildDeps vim wrk curl netcat \
     && cat /tmp/requirements-apt.txt | egrep -v "^\s*(#|$)" | xargs apt-get install -yqq \
     && CFLAGS="-Os -g0 -Wl,--strip-all" /usr/local/bin/pip install \
         --no-cache-dir \
@@ -44,11 +44,6 @@ RUN set -ex \
 #        && source ${framework}/bin/activate \
         && CFLAGS="-Os -g0 -Wl,--strip-all" ${framework}/bin/pip install \
           --no-cache-dir \
-          --compile \
-          --global-option=build_ext \
-          --global-option="-I/usr/include:/usr/local/include" \
-          --global-option="-L/usr/lib:/usr/local/lib" \
-          --global-option="-j 4" \
           -r ${framework}/requirements.txt \
         # gunicorn needs to be installed in EACH virtualenv...
         && ${framework}/bin/pip install -I gunicorn==${GUNICORN_VERSION} \

@@ -11,7 +11,7 @@ done = function(summary, latency, requests)
         file.write(
             file,
             string.format(
-                "%s,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%d,%d,%d,%d\n",
+                "%s,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%d,%d,%d,%d,%d,%d\n",
                 title,
                 latency.min / 1000,
                 latency:percentile(50) / 1000,

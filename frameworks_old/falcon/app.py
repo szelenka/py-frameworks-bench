@@ -9,8 +9,9 @@ from sqlalchemy.sql.expression import func
 from sqlalchemy.types import Integer, String
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from marshmallow import Schema, fields
 
-engine = create_engine("postgres://benchmark:benchmark@%s:5432/benchmark" % SQL_HOST, pool_size=10)
+engine = create_engine("postgres://benchmark:benchmark@%s:5432/benchmark" % SQL_HOST, pool_size=20)
 metadata = schema.MetaData()
 Base = declarative_base(metadata=metadata)
 Session = sessionmaker(bind=engine)
@@ -22,6 +23,12 @@ class Message(Base):
     id = Column(Integer, primary_key=True)
     content = Column(String(length=512))
 
+class MessageSchema(Schema):
+    id = fields.Int()
+    content = fields.String()
+
+
+schema = MessageSchema(many=True)
 
 # Templates
 import os
@@ -59,9 +66,10 @@ class CompleteResource(object):
         messages.append(Message(content='Hello, World!'))
         messages.sort(key=lambda m: m.content)
         session.close()
-        template = env.get_template('template.html')
-        response.set_header('Content-Type', 'text/html')
-        response.body = template.render(messages=messages)
+        # template = env.get_template('template.html')
+        # response.set_header('Content-Type', 'text/html')
+        # response.body = template.render(messages=messages)
+        response.body = schema.dump(messages)
 
 
 app = falcon.API()
@@ -72,3 +80,9 @@ app.add_route("/complete", CompleteResource())
 
 
 # pylama:ignore=E402
+
+if __name__ == "__main__":
+    from wsgiref import simple_server
+
+    httpd = simple_server.make_server('0.0.0.0', 5000, app)
+    httpd.serve_forever()

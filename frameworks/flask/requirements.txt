@@ -1,8 +1,8 @@
-flask               == 0.11.1
+flask               == 1.0.2
 flask-sqlalchemy    == 2.1
 psycopg2-binary
 requests
 SQLAlchemy          >= 1.0.12
-
+marshmallow         == 2.18.1
 gunicorn            >= 19.6.0
 meinheld            >= 0.5.8

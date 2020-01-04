@@ -1,9 +1,7 @@
+Quart     == 0.8.1
 asyncpg   == 0.18.2
 aiohttp   == 3.5.4
 gunicorn  == 19.9.0
-starlette == 0.10.3
 databases == 0.1.4
 marshmallow == 2.18.1
-jinja2    == 2.10
-ujson     == 1.35
 uvicorn   >= 0.4.5

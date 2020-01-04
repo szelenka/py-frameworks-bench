@@ -4,7 +4,7 @@ labels:
   partOf: py-frameworks-bench
 
 image:
-  repository: hub.docker.com
+  repository: containers.cisco.com
   organization: szelenka
   postgresql: frameworks-postgresql
   nginx: frameworks-nginx
@@ -28,10 +28,10 @@ service:
 resources:
   postgresql:
     requests:
-      cpu: 25m
+      cpu: 100m
       memory: 256Mi
     limits:
-      cpu: 25m
+      cpu: 100m
       memory: 256Mi
   nginx:
     requests:
@@ -42,10 +42,10 @@ resources:
       memory: 32Mi
   frameworks:
     requests:
-      cpu: 300m
+      cpu: 200m
       memory: 1Gi
     limits:
-      cpu: 300m
+      cpu: 200m
       memory: 1Gi
   controller:
     requests:

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 
 APP_ROOT_SRC=${APP_ROOT_SRC-/opt/app-root/src}
 TEST_HTTP_SERVER=${TEST_HTTP_SERVER-0.0.0.0}

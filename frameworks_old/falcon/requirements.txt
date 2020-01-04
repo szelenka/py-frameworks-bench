@@ -1,8 +1,8 @@
-falcon      == 1.0.0
+falcon      == 1.4.1
 jinja2      == 2.8.0
 psycopg2-binary
 requests    == 2.10.0
 SQLAlchemy  >= 1.0.12
-
+marshmallow == 2.18.1
 gunicorn    >= 19.5.0
 meinheld    >= 0.5.9

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 
 APP_ROOT_SRC=${APP_ROOT_SRC-/opt/app-root/src}
 TRY_LOOP=${TRY_LOOP-30}
@@ -50,7 +50,9 @@ run_wsgi_service() {
 
   if [ "${framework}" = "tornado" ]; then
     worker_class="gunicorn.workers.gtornado.TornadoWorker"
-  elif [ "${framework}" = "responder" ] || [ "${framework}" = "starlette" ] ; then
+  elif [ "${framework}" = "sanic" ]; then
+    worker_class="sanic.worker.GunicornWorker"
+  elif [ "${framework}" = "responder" ] || [ "${framework}" = "starlette" ] || [ "${framework}" = "quart" ]; then
     worker_class="uvicorn.workers.UvicornWorker"
   elif [ "${framework}" = "twisted" ]; then
     opts="-pid &"

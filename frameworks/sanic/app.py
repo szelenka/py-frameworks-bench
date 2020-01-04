@@ -1,17 +1,13 @@
 import os
-import uvicorn
 import sqlalchemy as sa
 from sqlalchemy.ext.declarative import declarative_base
 import databases
-from starlette.applications import Starlette
-from starlette.config import Config
-# from starlette.middleware.database import DatabaseMiddleware
-from starlette.responses import JSONResponse, HTMLResponse
-from marshmallow import Schema, fields
+
 from aiohttp import ClientSession
 
+from sanic import Sanic, response
+from marshmallow import Schema, fields
 
-# Configuration from environment variables or '.env' file.
 
 HTTP_HOST = os.environ.get('HTTP_HOST', '127.0.0.1:8000')
 SQL_HOST = os.environ.get('SQL_HOST', '127.0.0.1')
@@ -37,33 +33,31 @@ schema = MessageSchema(many=True)
 
 # Application setup.
 database = databases.Database(DATABASE_URL)
-app = Starlette(template_directory='templates')
-# app.add_middleware(DatabaseMiddleware, database_url=DATABASE_URL)
+app = Sanic(__name__)
 
 
-@app.on_event("startup")
-async def startup():
+@app.listener('before_server_start')
+async def startup(sanic, loop):
     await database.connect()
 
 
-@app.on_event("shutdown")
-async def shutdown():
+@app.listener('after_server_stop')
+async def shutdown(sanic, loop):
     await database.disconnect()
 
 
-# Endpoints.
 @app.route('/json')
-async def json_serialization(req):
-    return JSONResponse({'message': 'Hello, world!'})
+async def json(req):
+    return response.json(body='Hello, World!')
 
 
 @app.route('/remote')
 async def remote(req):
     url = 'http://%s' % HTTP_HOST
     async with ClientSession() as session:
-        async with session.get(url) as response:
-            response = await response.text()
-            return HTMLResponse(response)
+        async with session.get(url) as r:
+            text = await r.text()
+            return response.html(text)
 
 
 @app.route('/complete')
@@ -72,12 +66,8 @@ async def complete(req):
     messages = await database.fetch_all(stmt)
     messages.sort(key=lambda m: m['content'])
 
-    # template = app.get_template('template.html')
-    # content = template.render(messages=list(messages))
-    # return HTMLResponse(content)
-
-    return JSONResponse(schema.dump(messages))
+    return response.json(schema.dump(messages))
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host="127.0.0.1", port=5000)
+    app.run(host="127.0.0.1", port=5000)
